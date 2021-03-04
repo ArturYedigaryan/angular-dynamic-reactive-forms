@@ -1,0 +1,64 @@
+<form [formGroup]="form" (ngSubmit)="sendObj()">
+  <div *ngFor="let prop of personProps">
+    <label [for]="prop.label">{{prop.label}}:</label>
+
+    <div [ngSwitch]="prop.type">
+      <input
+        *ngSwitchCase="'text'"
+        [type]="prop.type"
+        [id]="prop.label"
+        [formControlName]="prop.key"
+      >
+
+      <input
+        *ngSwitchCase="'number'"
+        type="number"
+        [id]="prop.label"
+        [formControlName]="prop.key"
+      >
+
+      <div *ngSwitchCase="'radio'">
+        <label *ngFor="let option of prop.options">
+          <input
+            type="radio"
+            [name]="prop.key"
+            [formControlName]="prop.key"
+            [value]="option.value"
+          >
+          {{option.label}}
+        </label>
+      </div>
+
+      <select
+        *ngSwitchCase="'select'"
+        [id]="prop.label"
+        [formControlName]="prop.key"
+      >
+        <option
+          *ngFor="let option of prop.options"
+          [value]="option.value"
+        >{{option.label}}</option>
+      </select>
+    </div>
+
+    <div
+      class="error"
+      *ngIf="form.get(prop.key).invalid && (form.get(prop.key).dirty || form.get(prop.key).touched)"
+    >
+      <div *ngIf="form.get(prop.key).errors.required">
+        you have to provide a value.
+      </div>
+      <div *ngIf="form.get(prop.key).errors.min">
+        you have to provide a value greater or equal to {{form.get(prop.key).errors.min.min}}.
+      </div>
+    </div>
+
+  </div>
+
+  <button type="submit">Send</button>
+</form>
+
+
+<pre>
+  {{form.value | json}}
+</pre>
